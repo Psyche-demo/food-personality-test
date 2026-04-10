@@ -188,6 +188,14 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
+        /* 防止移动端点击穿透的遮罩 */
+        .touch-shield {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 999;
+            background: transparent;
+        }
+        
         .question-number {
             display: inline-block;
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
@@ -954,7 +962,7 @@ function renderQuestion() {
 }
 
 function selectOption(index) {
-    // 防止重复点击（上一题的点击事件传递到下一题）
+    // 防止重复点击
     if (window._optionLocked) return;
     window._optionLocked = true;
     
@@ -975,30 +983,29 @@ function selectOption(index) {
         scores[dim] += val;
     }
     
-    // 高亮选中
+    // 高亮选中 & 禁用所有按钮
     const buttons = document.querySelectorAll('.option-btn');
     buttons.forEach(b => { b.classList.remove('selected'); b.style.pointerEvents = 'none'; });
     buttons[index].classList.add('selected');
     
+    // 立即铺一层透明遮罩，阻断任何后续触摸事件穿透到下一题
+    const shield = document.createElement('div');
+    shield.className = 'touch-shield';
+    document.body.appendChild(shield);
+    
     // 延迟跳转到下一题
     setTimeout(() => {
         currentQuestion++;
-        window._optionLocked = false;
         if (currentQuestion < questions.length) {
-            // 清除下一题可能残留的旧答案（确保新题目没有默认选项）
-            if (answers[currentQuestion] !== undefined) {
-                // 撤销旧答案的加分
-                const nextQ = questions[currentQuestion];
-                const oldOpt = nextQ.options[answers[currentQuestion]];
-                for (const [dim, val] of Object.entries(oldOpt.scores)) {
-                    scores[dim] -= val;
-                }
-                delete answers[currentQuestion];
-            }
             renderQuestion();
         } else {
             showResult();
         }
+        // 再等一帧后移除遮罩，确保新页面已经渲染完毕
+        setTimeout(() => {
+            shield.remove();
+            window._optionLocked = false;
+        }, 100);
     }, 500);
 }
 
