@@ -983,6 +983,16 @@ function selectOption(index) {
         currentQuestion++;
         window._optionLocked = false;
         if (currentQuestion < questions.length) {
+            // 清除下一题可能残留的旧答案（确保新题目没有默认选项）
+            if (answers[currentQuestion] !== undefined) {
+                // 撤销旧答案的加分
+                const nextQ = questions[currentQuestion];
+                const oldOpt = nextQ.options[answers[currentQuestion]];
+                for (const [dim, val] of Object.entries(oldOpt.scores)) {
+                    scores[dim] -= val;
+                }
+                delete answers[currentQuestion];
+            }
             renderQuestion();
         } else {
             showResult();
