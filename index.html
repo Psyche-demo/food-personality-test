@@ -148,7 +148,7 @@
         }
         
         .back-btn {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             width: 32px;
@@ -158,9 +158,11 @@
             border-radius: 50%;
             cursor: pointer;
             font-size: 16px;
+            line-height: 1;
             color: var(--text-light);
             transition: all 0.2s;
             flex-shrink: 0;
+            padding: 0;
         }
         .back-btn:hover { background: #E8DED4; color: var(--text); }
         .back-btn:active { transform: scale(0.9); }
@@ -397,6 +399,90 @@
         }
         .action-btn.secondary:hover { background: #FFF0E5; }
         
+        .feedback-section {
+            margin-top: 8px;
+            padding: 16px;
+            background: #F8F4F0;
+            border-radius: 14px;
+            text-align: center;
+        }
+        
+        .feedback-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        
+        .feedback-desc {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .feedback-links {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .feedback-btn {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 10px 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            background: white;
+            border: 1.5px solid #F0E0D0;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .feedback-btn:hover { border-color: var(--primary); background: #FFF8F0; }
+        
+        .feedback-btn.qq { color: #12B7F5; }
+        .feedback-btn.qq:hover { border-color: #12B7F5; background: #F0FAFF; }
+        .feedback-btn.qq span { font-size: 11px; color: var(--text-lighter); }
+        
+        .tip-section {
+            margin-top: 8px;
+            padding: 16px;
+            background: linear-gradient(135deg, #FFF8F0, #FFF0E5);
+            border-radius: 14px;
+            text-align: center;
+        }
+        
+        .tip-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        
+        .tip-desc {
+            font-size: 12px;
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        
+        .tip-qr {
+            width: 140px;
+            height: 140px;
+            border-radius: 10px;
+            border: 2px solid #F0E0D0;
+        }
+        
+        .tip-hint {
+            margin-top: 8px;
+            font-size: 11px;
+            color: var(--text-lighter);
+        }
+        
         .action-btn.pc-btn {
             background: white;
             color: var(--accent-blue);
@@ -421,10 +507,88 @@
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
         
+        /* 图片预览弹层 */
+        .image-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 10000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .image-overlay.active { display: flex; }
+        
+        .image-overlay .tip {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .image-overlay img {
+            max-width: 92%;
+            max-height: 70vh;
+            border-radius: 16px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+        }
+        
+        .image-overlay .close-overlay {
+            margin-top: 20px;
+            padding: 12px 36px;
+            font-size: 15px;
+            font-weight: 700;
+            color: white;
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.4);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .image-overlay .close-overlay:hover { background: rgba(255,255,255,0.25); }
+        
         .watermark {
             margin-top: 20px;
             font-size: 12px;
             color: var(--text-lighter);
+        }
+        
+        .qr-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 14px 16px;
+            background: #FFF8F0;
+            border-radius: 12px;
+        }
+        
+        .qr-section .qr-box {
+            flex-shrink: 0;
+            width: 72px;
+            height: 72px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .qr-section .qr-box canvas,
+        .qr-section .qr-box img { width: 72px !important; height: 72px !important; }
+        
+        .qr-section .qr-text {
+            text-align: left;
+            font-size: 12px;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        
+        .qr-section .qr-text strong {
+            display: block;
+            font-size: 13px;
+            color: var(--primary);
+            margin-bottom: 2px;
         }
         
         /* ===== 适配 ===== */
@@ -436,6 +600,7 @@
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -460,7 +625,7 @@
     <div class="progress-bar-container">
         <div class="progress-info">
             <div class="progress-header">
-                <button class="back-btn" id="back-btn" onclick="goBack()" disabled title="返回上一题">←</button>
+                <button class="back-btn" id="back-btn" onclick="goBack()" disabled title="返回上一题"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:block"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                 <span>🍜 打工人食物测试</span>
             </div>
             <span class="progress-num"><span id="current-q">1</span> / 15</span>
@@ -485,6 +650,13 @@
 
 <!-- Toast 提示 -->
 <div class="toast" id="toast"></div>
+
+<!-- 图片预览弹层（移动端长按保存用） -->
+<div class="image-overlay" id="image-overlay">
+    <p class="tip">📸 长按下方图片即可保存到相册</p>
+    <img id="overlay-image" src="" alt="测试结果">
+    <button class="close-overlay" onclick="closeOverlay()">✕ 关闭</button>
+</div>
 
 <script>
 // ===== 题目数据 =====
@@ -879,6 +1051,13 @@ function showResult() {
             ${renderDimBar('✨ 精致', 'style', normalized.style)}
             ${renderDimBar('🎭 情绪', 'mood', normalized.mood)}
         </div>
+        <div class="qr-section">
+            <div class="qr-box" id="qrcode"></div>
+            <div class="qr-text">
+                <strong>🥢 扫码来测试</strong>
+                你也是什么打工人食物？<br>3分钟测出你的职场食物人格！
+            </div>
+        </div>
         <div class="action-buttons">
             <p class="share-group-label">📱 移动端</p>
             <button class="action-btn primary" onclick="mobileShare()">📸 长按截图分享</button>
@@ -888,6 +1067,20 @@ function showResult() {
                 <button class="action-btn pc-btn" onclick="copyToClipboard()">📋 复制到剪贴板</button>
             </div>
             <button class="action-btn secondary" onclick="restartQuiz()">🔄 再测一次</button>
+            <div class="feedback-section">
+                <p class="feedback-title">💬 觉得这道菜味道如何？</p>
+                <p class="feedback-desc">别已读不回啊！30秒填个反馈，你就是整条街最有心的打工人食物 🫡</p>
+                <div class="feedback-links">
+                    <a href="https://wj.qq.com/s2/26289107/8f5f/" target="_blank" class="feedback-btn">📝 填写问卷</a>
+                    <a href="https://wimg.qq.com/#/addFriend/3967546395" target="_blank" class="feedback-btn qq">QQ <span>3967546395</span></a>
+                </div>
+            </div>
+            <div class="tip-section">
+                <p class="tip-title">🍜 投喂厨师</p>
+                <p class="tip-desc">这道菜免费，但厨师要吃饭。<br>打赏一杯奶茶，下个测试给你加个SSR隐藏款 😏</p>
+                <img class="tip-qr" src="tip.png" alt="打赏二维码">
+                <p class="tip-hint">微信扫码 · 金额随意 · 厨师感激涕零</p>
+            </div>
         </div>
         <p class="watermark">🍜 你是什么打工人食物 · 趣味测试 · 仅供娱乐</p>
     `;
@@ -898,6 +1091,20 @@ function showResult() {
             el.style.width = el.dataset.width;
         });
     }, 300);
+    
+    // 生成二维码
+    const qrContainer = document.getElementById('qrcode');
+    if (qrContainer) {
+        qrContainer.innerHTML = '';
+        new QRCode(qrContainer, {
+            text: 'https://psyche-demo.github.io/food-personality-test/',
+            width: 72,
+            height: 72,
+            colorDark: '#FF6B35',
+            colorLight: '#FFFFFF',
+            correctLevel: QRCode.CorrectLevel.M
+        });
+    }
 }
 
 function renderDimBar(label, dim, value) {
@@ -922,25 +1129,62 @@ function showToast(msg) {
 
 async function captureCard() {
     const card = document.getElementById('result-card');
-    // 临时隐藏按钮区域，只截结果内容
+    const screen = document.getElementById('result-screen');
+    // 临时隐藏按钮区域（保留二维码和水印）
     const actions = card.querySelector('.action-buttons');
-    const watermark = card.querySelector('.watermark');
     if (actions) actions.style.display = 'none';
+    
+    // 保存原始样式
+    const origScreenBg = screen.style.background;
+    const origCardShadow = card.style.boxShadow;
+    const origCardRadius = card.style.borderRadius;
+    const origCardAnimation = card.style.animation;
+    
+    // 截图时清除所有可能导致蒙层的样式
+    screen.style.background = 'none';
+    card.style.boxShadow = 'none';
+    card.style.borderRadius = '0';
+    card.style.animation = 'none';
+    
+    // 等一帧确保样式生效 + 二维码渲染完成
+    await new Promise(r => setTimeout(r, 200));
     
     const canvas = await html2canvas(card, {
         scale: 2,
         backgroundColor: '#FFFFFF',
-        borderRadius: '24px',
         useCORS: true,
         logging: false,
+        removeContainer: true,
+        windowWidth: card.scrollWidth,
+        windowHeight: card.scrollHeight,
     });
     
+    // 恢复所有样式
     if (actions) actions.style.display = '';
+    screen.style.background = origScreenBg;
+    card.style.boxShadow = origCardShadow;
+    card.style.borderRadius = origCardRadius;
+    card.style.animation = origCardAnimation;
+    
     return canvas;
 }
 
 function mobileShare() {
-    showToast('📸 请长按结果卡片区域截图，然后分享到朋友圈/小红书');
+    showToast('⏳ 正在生成图片...');
+    captureCard().then(canvas => {
+        const dataUrl = canvas.toDataURL('image/png');
+        const overlay = document.getElementById('image-overlay');
+        const img = document.getElementById('overlay-image');
+        img.src = dataUrl;
+        overlay.classList.add('active');
+    }).catch(e => {
+        showToast('❌ 生成失败，请尝试手动截图');
+        console.error(e);
+    });
+}
+
+function closeOverlay() {
+    document.getElementById('image-overlay').classList.remove('active');
 }
 
 async function downloadImage() {
