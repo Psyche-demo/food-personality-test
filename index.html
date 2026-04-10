@@ -1007,7 +1007,16 @@ function selectOption(index) {
     buttons.forEach(b => b.classList.remove('selected'));
     buttons[index].classList.add('selected');
     
-    // 延迟后跳转（此时事件监听已经是 once:true 自动移除了，不会重复触发）
+    // 【微信浏览器修复】选中后立刻把所有选项替换成过渡提示
+    // 这样微信的"幽灵click"找不到任何按钮可以点
+    setTimeout(() => {
+        const container = document.getElementById('options-container');
+        if (container) {
+            container.innerHTML = '<div style="text-align:center;padding:20px;color:#999;font-size:14px;">⏳ 加载下一题...</div>';
+        }
+    }, 200);
+    
+    // 延迟后跳转
     setTimeout(() => {
         currentQuestion++;
         if (currentQuestion < questions.length) {
@@ -1015,7 +1024,7 @@ function selectOption(index) {
         } else {
             showResult();
         }
-    }, 500);
+    }, 600);
 }
 
 function goBack() {
