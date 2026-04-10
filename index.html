@@ -905,6 +905,7 @@ const results = [
 let currentQuestion = 0;
 let scores = { energy: 0, social: 0, stress: 0, style: 0, mood: 0 };
 let answers = []; // 记录每题选择的index，用于后退时撤销加分
+let isGoingBack = false; // 标记是否是后退操作
 
 function startQuiz() {
     currentQuestion = 0;
@@ -928,8 +929,9 @@ function renderQuestion() {
     document.getElementById('progress-fill').style.width = ((currentQuestion) / questions.length * 100) + '%';
     updateBackButton();
     
-    // 检查这题之前是否已有选择（后退回来的情况）
-    const previousChoice = answers[currentQuestion];
+    // 只有后退时才显示之前的选择，前进永远是干净的
+    const previousChoice = isGoingBack ? answers[currentQuestion] : undefined;
+    isGoingBack = false; // 重置标记
     
     const card = document.getElementById('question-card');
     card.innerHTML = `
@@ -1002,6 +1004,7 @@ function selectOption(index) {
 
 function goBack() {
     if (currentQuestion > 0) {
+        isGoingBack = true;
         currentQuestion--;
         renderQuestion();
     }
