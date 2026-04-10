@@ -446,7 +446,7 @@
         
         .feedback-btn.qq { color: #12B7F5; }
         .feedback-btn.qq:hover { border-color: #12B7F5; background: #F0FAFF; }
-        .feedback-btn.qq span { font-size: 11px; color: var(--text-lighter); }
+        .feedback-btn.qq span { font-size: 11px; color: var(--text-lighter); line-height: 1; }
         
         .tip-section {
             margin-top: 8px;
@@ -820,84 +820,84 @@ const results = [
         tagline: "外表冷淡，内心苦涩，但没你不行",
         desc: "你是办公室里最冷静的存在。不爱闲聊，不搞团建，但关键时刻永远靠谱。就像冰美式——第一口苦得皱眉，喝完却精神百倍。同事觉得你高冷，但其实你只是把热情都用在了工作上。",
         traits: ["高效", "独立", "冷静", "略显疏离"],
-        ideal: { energy: 4, social: 1.5, stress: 4.5, style: 4, mood: 1.5 }
+        ideal: { energy: 3.8, social: 1.5, stress: 4.2, style: 3.5, mood: 1.8 }
     },
     {
         id: "hotpot_base", name: "火锅底料", emoji: "🫕", rarity: "SR",
         tagline: "自己不发光，但能让所有人沸腾",
         desc: "你是团队里的隐形MVP。很少站在聚光灯下，但所有人都知道：没有你，团队就是一锅白开水。你擅长调动气氛、协调矛盾，是最被低估的那种人。",
         traits: ["协调力强", "默默付出", "被低估", "不可或缺"],
-        ideal: { energy: 4.5, social: 4.5, stress: 4, style: 2, mood: 4 }
+        ideal: { energy: 3.8, social: 4.5, stress: 3.8, style: 2.2, mood: 4 }
     },
     {
         id: "instant_noodles", name: "泡面", emoji: "🍜", rarity: "R",
         tagline: "三分钟搞定一切，是效率也是将就",
         desc: "你的人生哲学是：能三分钟解决的事绝不花五分钟。快速、高效、不挑环境。虽然偶尔觉得自己活得有点糙，但你知道：能吃饱就是胜利。",
         traits: ["效率至上", "适应力强", "略显糙", "实用主义"],
-        ideal: { energy: 4, social: 3, stress: 3.5, style: 1.5, mood: 3 }
+        ideal: { energy: 3.2, social: 2.5, stress: 3, style: 1.5, mood: 2.8 }
     },
     {
         id: "milk_tea", name: "奶茶", emoji: "🧋", rarity: "R",
         tagline: "含糖量决定今天的工作态度",
         desc: "你的情绪波动和奶茶的甜度成正比。你是办公室的开心果，口头禅是「我请大家喝奶茶吧」——用甜蜜治愈所有人。",
         traits: ["情绪外放", "慷慨", "治愈系", "容易受影响"],
-        ideal: { energy: 4, social: 4.5, stress: 2, style: 4, mood: 4.5 }
+        ideal: { energy: 3.2, social: 4.5, stress: 2.2, style: 3.5, mood: 4.8 }
     },
     {
         id: "laoganma", name: "老干妈", emoji: "🌶️", rarity: "SR",
         tagline: "看着普通，但谁都离不开你",
         desc: "你不是最耀眼的，但你是最稳的。简历不华丽，Title不高级，但关键时刻能顶上去。你像老干妈——货架上最不起眼，却是购物车里永远不会删除的存在。",
         traits: ["稳定可靠", "低调实干", "不可替代", "朴实无华"],
-        ideal: { energy: 3, social: 3, stress: 4.5, style: 1.5, mood: 3 }
+        ideal: { energy: 2.8, social: 2.8, stress: 4.2, style: 1.5, mood: 2.8 }
     },
     {
         id: "tiramisu", name: "提拉米苏", emoji: "🍰", rarity: "SR",
         tagline: "分层严重——面上精致，底下是碎饼干",
         desc: "表面上你是办公室最精致的人，PPT做得像艺术品。但只有你自己知道，精致全靠硬撑，内心和碎饼干一样脆弱。你的精致是盔甲，也是倔强。",
         traits: ["精致", "要面子", "内心脆弱", "追求完美"],
-        ideal: { energy: 3, social: 4, stress: 1.5, style: 5, mood: 3 }
+        ideal: { energy: 2.5, social: 3.5, stress: 1.8, style: 5, mood: 3 }
     },
     {
         id: "onigiri", name: "便利店饭团", emoji: "🍙", rarity: "R",
         tagline: "便宜实惠能打，是团队里最稳的人",
         desc: "你像便利店饭团——不是最好吃的，但永远在那里、永远够用、永远不出错。上司出差第一个想到你，同事请假第一个找你顶班。",
         traits: ["可靠", "朴实", "任劳任怨", "存在感低但不可缺"],
-        ideal: { energy: 2.5, social: 2.5, stress: 4, style: 1.5, mood: 3.5 }
+        ideal: { energy: 2.5, social: 2.5, stress: 3.8, style: 1.8, mood: 3.2 }
     },
     {
         id: "spicy_hotpot", name: "麻辣火锅", emoji: "🍲", rarity: "R",
         tagline: "要么不干，干就干到沸腾",
         desc: "你是办公室里的热血战士，做事自带BGM。只有滚烫和凉透两种温度——要么熬夜爆肝要么彻底摆烂，没有中间状态。",
         traits: ["激情", "极端", "感染力强", "易倦怠"],
-        ideal: { energy: 5, social: 4.5, stress: 3, style: 3, mood: 4 }
+        ideal: { energy: 4.8, social: 4.2, stress: 2.8, style: 2.8, mood: 4.2 }
     },
     {
         id: "waimai", name: "外卖", emoji: "🥡", rarity: "R",
         tagline: "永远在路上，永远被催",
         desc: "你的日常：赶deadline、赶地铁、赶会议。像一份外卖——从出锅就开始倒计时，每一秒都在被催促。微信置顶永远是工作群。",
         traits: ["忙碌", "焦虑", "多任务", "时间不够用"],
-        ideal: { energy: 4, social: 3, stress: 1.5, style: 3, mood: 2 }
+        ideal: { energy: 3.5, social: 2.8, stress: 1.5, style: 2.8, mood: 1.8 }
     },
     {
         id: "porridge", name: "白粥", emoji: "🥣", rarity: "SR",
         tagline: "什么都不加，但什么都能配",
         desc: "你是最百搭的存在。不挑队友、不挑项目、不挑工位——放哪儿都能活。你有一种让所有人都舒服的力量。加班到崩溃时，同事最想找的就是你。",
         traits: ["随和", "包容", "没野心", "治愈系"],
-        ideal: { energy: 1.5, social: 3.5, stress: 3.5, style: 1.5, mood: 4 }
+        ideal: { energy: 1.8, social: 3.5, stress: 3.2, style: 1.5, mood: 4.2 }
     },
     {
         id: "energy_drink", name: "功能饮料", emoji: "⚡", rarity: "SSR",
         tagline: "不是在冲刺，就是在准备冲刺",
         desc: "你是团队里的永动机。别人下班你加班，别人摸鱼你学习。像功能饮料——不好喝，但管用。你在的地方没人好意思摸鱼。",
         traits: ["卷王", "自驱力强", "压力大", "让人有压迫感"],
-        ideal: { energy: 5, social: 2.5, stress: 4.5, style: 4, mood: 2 }
+        ideal: { energy: 5, social: 2.2, stress: 4.8, style: 3.8, mood: 2 }
     },
     {
         id: "leftover", name: "昨天的剩饭", emoji: "🫙", rarity: "SSR",
         tagline: "热一热还能吃，但确实不新鲜了",
         desc: "你在这家公司待太久了。激情凉了，成长找不到了，但走又没那个勇气。你就像冰箱里那盒不知道放了几天的剩饭——丢了可惜，吃了没味。你偶尔会想：当初那个热气腾腾的自己，去哪了？",
         traits: ["倦怠", "安于现状", "想走又不走", "怀念过去"],
-        ideal: { energy: 1.5, social: 2, stress: 2.5, style: 2, mood: 1.5 }
+        ideal: { energy: 1, social: 1.2, stress: 1.5, style: 1.2, mood: 1 }
     }
 ];
 
@@ -952,6 +952,10 @@ function renderQuestion() {
 }
 
 function selectOption(index) {
+    // 防止重复点击（上一题的点击事件传递到下一题）
+    if (window._optionLocked) return;
+    window._optionLocked = true;
+    
     const q = questions[currentQuestion];
     const option = q.options[index];
     
@@ -971,18 +975,19 @@ function selectOption(index) {
     
     // 高亮选中
     const buttons = document.querySelectorAll('.option-btn');
-    buttons.forEach(b => b.classList.remove('selected'));
+    buttons.forEach(b => { b.classList.remove('selected'); b.style.pointerEvents = 'none'; });
     buttons[index].classList.add('selected');
     
     // 延迟跳转到下一题
     setTimeout(() => {
         currentQuestion++;
+        window._optionLocked = false;
         if (currentQuestion < questions.length) {
             renderQuestion();
         } else {
             showResult();
         }
-    }, 400);
+    }, 500);
 }
 
 function goBack() {
@@ -1060,7 +1065,7 @@ function showResult() {
         </div>
         <div class="action-buttons">
             <p class="share-group-label">📱 移动端</p>
-            <button class="action-btn primary" onclick="mobileShare()">📸 长按截图分享</button>
+            <button class="action-btn primary" onclick="mobileShare()">📸 点击生成分享长图</button>
             <p class="share-group-label">💻 PC端</p>
             <div class="share-row">
                 <button class="action-btn pc-btn" onclick="downloadImage()">💾 下载图片</button>
@@ -1079,7 +1084,7 @@ function showResult() {
                 <p class="tip-title">🍜 投喂厨师</p>
                 <p class="tip-desc">这道菜免费，但厨师要吃饭。<br>打赏一杯奶茶，下个测试给你加个SSR隐藏款 😏</p>
                 <img class="tip-qr" src="tip.png" alt="打赏二维码">
-                <p class="tip-hint">微信扫码 · 金额随意 · 厨师感激涕零</p>
+                <p class="tip-hint">⚠️ 微信内无法直接扫码，可以截图后在聊天框长按识别<br>厨师正在研发更优雅的赛博乞讨方式，敬请期待 🤖🙏</p>
             </div>
         </div>
         <p class="watermark">🍜 你是什么打工人食物 · 趣味测试 · 仅供娱乐</p>
