@@ -945,15 +945,38 @@ function renderQuestion() {
     card.innerHTML = `
         <span class="question-number">Q${currentQuestion + 1}</span>
         <div class="question-text">${q.text}</div>
-        <div class="options">
+        <div class="options" id="options-container">
             ${q.options.map((opt, i) => `
-                <button class="option-btn ${previousChoice === i ? 'selected' : ''}" onclick="selectOption(${i})">
+                <button class="option-btn ${previousChoice === i ? 'selected' : ''}" data-index="${i}">
                     <span class="option-label">${labels[i]}</span>
                     <span>${opt.text}</span>
                 </button>
             `).join('')}
         </div>
     `;
+    
+    // 用事件委托绑定，避免onclick在移动端的300ms延迟问题
+    const optionsContainer = document.getElementById('options-container');
+    let handled = false;
+    
+    optionsContainer.addEventListener('click', function(e) {
+        const btn = e.target.closest('.option-btn');
+        if (!btn || handled) return;
+        handled = true;
+        e.preventDefault();
+        e.stopPropagation();
+        selectOption(parseInt(btn.dataset.index));
+    }, { once: true });
+    
+    // 同时监听touchend，谁先触发就用谁
+    optionsContainer.addEventListener('touchend', function(e) {
+        const btn = e.target.closest('.option-btn');
+        if (!btn || handled) return;
+        handled = true;
+        e.preventDefault();
+        e.stopPropagation();
+        selectOption(parseInt(btn.dataset.index));
+    }, { once: true, passive: false });
     
     // 重新触发动画
     card.style.animation = 'none';
@@ -962,14 +985,10 @@ function renderQuestion() {
 }
 
 function selectOption(index) {
-    // 防止重复点击
-    if (window._optionLocked) return;
-    window._optionLocked = true;
-    
     const q = questions[currentQuestion];
     const option = q.options[index];
     
-    // 如果这题之前有选过（后退回来重选的情况），先撤销旧答案的加分
+    // 如果这题之前有选过（后退回来重选），先撤销旧答案的加分
     if (answers[currentQuestion] !== undefined) {
         const oldOption = q.options[answers[currentQuestion]];
         for (const [dim, val] of Object.entries(oldOption.scores)) {
@@ -983,17 +1002,12 @@ function selectOption(index) {
         scores[dim] += val;
     }
     
-    // 高亮选中 & 禁用所有按钮
+    // 高亮选中
     const buttons = document.querySelectorAll('.option-btn');
-    buttons.forEach(b => { b.classList.remove('selected'); b.style.pointerEvents = 'none'; });
+    buttons.forEach(b => b.classList.remove('selected'));
     buttons[index].classList.add('selected');
     
-    // 立即铺一层透明遮罩，阻断任何后续触摸事件穿透到下一题
-    const shield = document.createElement('div');
-    shield.className = 'touch-shield';
-    document.body.appendChild(shield);
-    
-    // 延迟跳转到下一题
+    // 延迟后跳转（此时事件监听已经是 once:true 自动移除了，不会重复触发）
     setTimeout(() => {
         currentQuestion++;
         if (currentQuestion < questions.length) {
@@ -1001,11 +1015,6 @@ function selectOption(index) {
         } else {
             showResult();
         }
-        // 再等一帧后移除遮罩，确保新页面已经渲染完毕
-        setTimeout(() => {
-            shield.remove();
-            window._optionLocked = false;
-        }, 100);
     }, 500);
 }
 
