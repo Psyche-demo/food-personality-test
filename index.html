@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>你是什么打工人食物 🍜</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #FF6B35;
+            --primary-light: #FF8F5E;
+            --primary-dark: #E55A2B;
+            --bg: #FFF8F0;
+            --card: #FFFFFF;
+            --text: #2D2D2D;
+            --text-light: #666;
+            --text-lighter: #999;
+            --accent-green: #4CAF50;
+            --accent-blue: #2196F3;
+            --accent-purple: #9C27B0;
+            --shadow: 0 4px 20px rgba(255, 107, 53, 0.15);
+            --shadow-lg: 0 8px 40px rgba(255, 107, 53, 0.2);
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* ===== 开始页 ===== */
+        .screen { display: none; min-height: 100vh; }
+        .screen.active { display: flex; flex-direction: column; align-items: center; }
+        
+        #start-screen {
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+            background: linear-gradient(180deg, #FFF0E5 0%, #FFF8F0 100%);
+        }
+        
+        .hero-emoji { font-size: 80px; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .hero-title {
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+        
+        .hero-subtitle {
+            font-size: 16px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        
+        .hero-desc {
+            font-size: 13px;
+            color: var(--text-lighter);
+            margin-bottom: 40px;
+        }
+        
+        .start-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 48px;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s;
+        }
+        .start-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,107,53,0.3); }
+        .start-btn:active { transform: translateY(0); }
+        
+        .food-parade {
+            display: flex;
+            gap: 16px;
+            margin-top: 40px;
+            font-size: 32px;
+            animation: parade 20s linear infinite;
+        }
+        @keyframes parade {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        /* ===== 答题页 ===== */
+        #quiz-screen { padding: 0; background: var(--bg); }
+        
+        .progress-bar-container {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            background: white;
+            padding: 12px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: var(--text-light);
+        }
+        
+        .progress-num { font-weight: 700; color: var(--primary); font-size: 15px; }
+        
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: #F0E8E0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 3px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .progress-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #F0E8E0;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--text-light);
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .back-btn:hover { background: #E8DED4; color: var(--text); }
+        .back-btn:active { transform: scale(0.9); }
+        .back-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        
+        .question-container {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 24px 20px 40px;
+        }
+        
+        .question-card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px 24px;
+            box-shadow: var(--shadow);
+            animation: slideUp 0.4s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .question-number {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .question-text {
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            color: var(--text);
+        }
+        
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        
+        .option-btn {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: #FFF8F0;
+            border: 2px solid transparent;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-align: left;
+            font-size: 15px;
+            line-height: 1.5;
+            color: var(--text);
+        }
+        
+        .option-btn:hover { border-color: var(--primary-light); background: #FFF0E5; transform: translateX(4px); }
+        .option-btn:active { transform: scale(0.98); }
+        
+        .option-btn.selected {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(255,107,53,0.08), rgba(255,107,53,0.15));
+            box-shadow: 0 2px 12px rgba(255,107,53,0.15);
+        }
+        
+        .option-label {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            color: white;
+            font-weight: 700;
+            font-size: 13px;
+            border-radius: 50%;
+        }
+        
+        .option-btn.selected .option-label { background: var(--primary-dark); }
+        
+        /* ===== 结果页 ===== */
+        #result-screen {
+            justify-content: flex-start;
+            padding: 40px 20px;
+            background: linear-gradient(180deg, #FFF0E5 0%, #FFF8F0 50%, #FFF8F0 100%);
+        }
+        
+        .result-card {
+            max-width: 400px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .result-badge {
+            display: inline-block;
+            padding: 4px 16px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+        }
+        
+        .result-badge.ssr { background: linear-gradient(135deg, #FF4500, #FF6347); }
+        .result-badge.sr { background: linear-gradient(135deg, #9C27B0, #BA68C8); }
+        .result-badge.r { background: linear-gradient(135deg, #2196F3, #64B5F6); }
+        
+        .result-emoji { font-size: 80px; margin: 16px 0; display: block; }
+        
+        .result-name {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        
+        .result-tagline {
+            font-size: 16px;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .result-desc {
+            font-size: 14px;
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 20px;
+            text-align: left;
+            padding: 16px;
+            background: #FFF8F0;
+            border-radius: 12px;
+        }
+        
+        .result-traits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+        
+        .trait-tag {
+            padding: 6px 14px;
+            background: #FFF0E5;
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 20px;
+        }
+        
+        .dimension-bars { margin: 20px 0; text-align: left; }
+        
+        .dim-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+        
+        .dim-label { width: 50px; text-align: right; color: var(--text-light); font-weight: 500; }
+        
+        .dim-track { flex: 1; height: 8px; background: #F0E8E0; border-radius: 4px; overflow: hidden; }
+        
+        .dim-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease-out;
+        }
+        
+        .dim-fill.energy { background: linear-gradient(90deg, #FF6B35, #FF8F5E); }
+        .dim-fill.social { background: linear-gradient(90deg, #2196F3, #64B5F6); }
+        .dim-fill.stress { background: linear-gradient(90deg, #4CAF50, #81C784); }
+        .dim-fill.style { background: linear-gradient(90deg, #9C27B0, #CE93D8); }
+        .dim-fill.mood { background: linear-gradient(90deg, #FF9800, #FFB74D); }
+        
+        .dim-value { width: 30px; font-weight: 700; color: var(--text); }
+        
+        .action-buttons { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+        
+        .share-group-label {
+            font-size: 12px;
+            color: var(--text-lighter);
+            margin-bottom: -4px;
+            margin-top: 4px;
+        }
+        
+        .share-row { display: flex; gap: 10px; }
+        .share-row .action-btn { flex: 1; padding: 12px 8px; font-size: 14px; }
+        
+        .action-btn {
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .action-btn.primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: var(--shadow);
+        }
+        .action-btn.primary:hover { transform: translateY(-2px); }
+        
+        .action-btn.secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        .action-btn.secondary:hover { background: #FFF0E5; }
+        
+        .action-btn.pc-btn {
+            background: white;
+            color: var(--accent-blue);
+            border: 2px solid var(--accent-blue);
+        }
+        .action-btn.pc-btn:hover { background: #E3F2FD; }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 9999;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        
+        .watermark {
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--text-lighter);
+        }
+        
+        /* ===== 适配 ===== */
+        @media (max-width: 420px) {
+            .hero-title { font-size: 26px; }
+            .question-text { font-size: 16px; }
+            .option-btn { font-size: 14px; padding: 14px; }
+            .result-name { font-size: 24px; }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+
+<!-- ===== 开始页 ===== -->
+<div id="start-screen" class="screen active">
+    <div class="hero-emoji">🍜</div>
+    <h1 class="hero-title">你是什么打工人食物？</h1>
+    <p class="hero-subtitle">每个打工人都是一道菜<br>只是还没找到自己的菜名</p>
+    <p class="hero-desc">15道题 · 3分钟 · 12种食物人格 · 含SSR隐藏款</p>
+    <button class="start-btn" onclick="startQuiz()">
+        🥢 开始测试
+    </button>
+    <div class="food-parade">
+        <span>☕</span><span>🫕</span><span>🍜</span><span>🧋</span><span>🌶️</span><span>🍰</span>
+        <span>🍙</span><span>🍲</span><span>🥡</span><span>🥣</span><span>⚡</span><span>🫙</span>
+        <span>☕</span><span>🫕</span><span>🍜</span><span>🧋</span><span>🌶️</span><span>🍰</span>
+    </div>
+</div>
+
+<!-- ===== 答题页 ===== -->
+<div id="quiz-screen" class="screen">
+    <div class="progress-bar-container">
+        <div class="progress-info">
+            <div class="progress-header">
+                <button class="back-btn" id="back-btn" onclick="goBack()" disabled title="返回上一题">←</button>
+                <span>🍜 打工人食物测试</span>
+            </div>
+            <span class="progress-num"><span id="current-q">1</span> / 15</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+    </div>
+    <div class="question-container">
+        <div class="question-card" id="question-card">
+            <!-- 动态生成 -->
+        </div>
+    </div>
+</div>
+
+<!-- ===== 结果页 ===== -->
+<div id="result-screen" class="screen">
+    <div class="result-card" id="result-card">
+        <!-- 动态生成 -->
+    </div>
+</div>
+
+<!-- Toast 提示 -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== 题目数据 =====
+const questions = [
+    {
+        id: 1,
+        text: "周一早上闹钟响了，你的第一反应是：",
+        options: [
+            { text: "弹起来，新的一周冲冲冲！", scores: { energy: 5, mood: 5 } },
+            { text: "关掉闹钟，再睡5分钟（最后变成50分钟）", scores: { energy: 1, mood: 2 } },
+            { text: "叹口气，打开手机看工作群有没有炸", scores: { energy: 2, stress: 1 } },
+            { text: "平静起床，按部就班准备出门", scores: { energy: 3, stress: 4 } }
+        ]
+    },
+    {
+        id: 2,
+        text: "中午吃什么？你的选择是：",
+        options: [
+            { text: "冰美式+沙拉，精致打工人必备", scores: { style: 5, mood: 3 } },
+            { text: "泡面搞定，省时间赶进度", scores: { style: 1, energy: 4 } },
+            { text: "叫上同事一起出去吃，顺便八卦", scores: { social: 5, mood: 4 } },
+            { text: "吃什么都行，随便应付一下", scores: { style: 1, energy: 2 } }
+        ]
+    },
+    {
+        id: 3,
+        text: "领导突然说「下午开个会」，你的心理活动是：",
+        options: [
+            { text: "来吧，正好有几个想法要汇报", scores: { energy: 5, social: 4 } },
+            { text: "完了，我的进度还没做完", scores: { stress: 1, energy: 3 } },
+            { text: "……又开会？上一个会的结论都没执行完", scores: { mood: 1, stress: 2 } },
+            { text: "无所谓，带杯咖啡过去就行", scores: { stress: 4, mood: 3 } }
+        ]
+    },
+    {
+        id: 4,
+        text: "你最理想的工位环境是：",
+        options: [
+            { text: "安静角落，最好没人打扰，戴耳机就是在工作", scores: { social: 1, style: 3 } },
+            { text: "热闹开放区，随时能跟同事聊两句", scores: { social: 5, energy: 4 } },
+            { text: "在家远程！穿着睡衣写代码它不香吗", scores: { social: 1, style: 2 } },
+            { text: "无所谓，给我把椅子就行", scores: { social: 3, style: 1 } }
+        ]
+    },
+    {
+        id: 5,
+        text: "加班到晚上9点，你的状态是：",
+        options: [
+            { text: "还在高效输出，进入心流了", scores: { energy: 5, stress: 5 } },
+            { text: "人在工位，魂在外面，每30秒看一次时间", scores: { energy: 1, mood: 1 } },
+            { text: "打开外卖APP，点杯奶茶犒劳自己", scores: { mood: 4, stress: 2 } },
+            { text: "习惯了，反正每天都这样", scores: { stress: 3, mood: 2 } }
+        ]
+    },
+    {
+        id: 6,
+        text: "同事工作出了差错找你帮忙，你会：",
+        options: [
+            { text: "二话不说帮他搞定，举手之劳", scores: { social: 4, energy: 4 } },
+            { text: "帮，但心里在算这算不算我的KPI", scores: { style: 4, mood: 2 } },
+            { text: "帮忙可以，但你得请我喝奶茶", scores: { social: 4, mood: 4 } },
+            { text: "假装没看到消息……已读不回", scores: { social: 1, stress: 3 } }
+        ]
+    },
+    {
+        id: 7,
+        text: "年终总结里你最想写的一句话是：",
+        options: [
+            { text: "今年超额完成了所有目标！", scores: { energy: 5, style: 4 } },
+            { text: "活着就是最大的KPI", scores: { mood: 1, stress: 1 } },
+            { text: "感谢团队，没有你们我一个人干不了", scores: { social: 5, mood: 4 } },
+            { text: "……复制粘贴去年的", scores: { energy: 1, mood: 2 } }
+        ]
+    },
+    {
+        id: 8,
+        text: "公司团建活动，你的态度是：",
+        options: [
+            { text: "太好了！我来负责策划！", scores: { social: 5, energy: 5 } },
+            { text: "去吧，有免费食物就行", scores: { social: 3, mood: 3 } },
+            { text: "能不去吗？我有个快递要签收……", scores: { social: 1, energy: 1 } },
+            { text: "去，但全程玩手机", scores: { social: 2, mood: 2 } }
+        ]
+    },
+    {
+        id: 9,
+        text: "你工作时的背景音乐偏好是：",
+        options: [
+            { text: "绝对安静，任何声音都是干扰", scores: { social: 1, stress: 4 } },
+            { text: "节奏感强的电子乐，越嗨效率越高", scores: { energy: 5, mood: 4 } },
+            { text: "lo-fi/白噪音，让我进入状态", scores: { style: 4, stress: 3 } },
+            { text: "随便，播什么我都听不见，已经走神了", scores: { energy: 1, mood: 2 } }
+        ]
+    },
+    {
+        id: 10,
+        text: "你觉得自己在团队中更像：",
+        options: [
+            { text: "发动机——没我大家都不动", scores: { energy: 5, social: 4 } },
+            { text: "润滑剂——默默让一切顺利运转", scores: { social: 4, stress: 4 } },
+            { text: "备胎——平时没存在感，坏了才想起我", scores: { mood: 1, social: 2 } },
+            { text: "装饰品——好看但不太有用（误）", scores: { style: 5, energy: 2 } }
+        ]
+    },
+    {
+        id: 11,
+        text: "面对一个全新的紧急项目，你的反应是：",
+        options: [
+            { text: "兴奋！终于有新挑战了！", scores: { energy: 5, stress: 5 } },
+            { text: "先列个计划表，按步骤来", scores: { stress: 4, style: 4 } },
+            { text: "内心慌张，表面淡定：「没问题」", scores: { stress: 2, style: 4 } },
+            { text: "又来？我还有三个没做完呢……", scores: { stress: 1, mood: 1 } }
+        ]
+    },
+    {
+        id: 12,
+        text: "你的微信工作群消息提示是：",
+        options: [
+            { text: "全部置顶，秒回", scores: { energy: 4, social: 4 } },
+            { text: "免打扰，每天固定看两次", scores: { style: 3, stress: 4 } },
+            { text: "99+未读，看心情点开", scores: { social: 1, stress: 2 } },
+            { text: "退群了（不是）", scores: { social: 1, mood: 1 } }
+        ]
+    },
+    {
+        id: 13,
+        text: "如果发工资多发了100块，你会：",
+        options: [
+            { text: "立刻报告HR，多一分不要", scores: { style: 4, stress: 4 } },
+            { text: "先美滋滋一会儿，然后还是去说一声", scores: { mood: 4, style: 3 } },
+            { text: "不说了吧，就当加班费", scores: { mood: 3, stress: 2 } },
+            { text: "多100？那点钱我根本不会发现", scores: { energy: 1, mood: 2 } }
+        ]
+    },
+    {
+        id: 14,
+        text: "下班后你最常做的事是：",
+        options: [
+            { text: "健身/学习/搞副业，一刻不停", scores: { energy: 5, style: 5 } },
+            { text: "追剧/打游戏/刷手机，彻底放空", scores: { energy: 1, mood: 3 } },
+            { text: "约朋友吃饭喝酒，社交续命", scores: { social: 5, mood: 5 } },
+            { text: "躺着，什么也不做，什么也不想", scores: { energy: 1, mood: 1 } }
+        ]
+    },
+    {
+        id: 15,
+        text: "用一句话形容你的打工状态：",
+        options: [
+            { text: "燃烧吧小宇宙！（虽然快烧完了）", scores: { energy: 5, mood: 3 } },
+            { text: "我不是在打工，我是在修行", scores: { stress: 4, mood: 3 } },
+            { text: "上班如上坟，每天都在渡劫", scores: { mood: 1, stress: 1 } },
+            { text: "还行吧，混口饭吃", scores: { energy: 2, mood: 3 } }
+        ]
+    }
+];
+
+// ===== 结果数据 =====
+const results = [
+    {
+        id: "ice_americano", name: "冰美式", emoji: "☕", rarity: "R",
+        tagline: "外表冷淡，内心苦涩，但没你不行",
+        desc: "你是办公室里最冷静的存在。不爱闲聊，不搞团建，但关键时刻永远靠谱。就像冰美式——第一口苦得皱眉，喝完却精神百倍。同事觉得你高冷，但其实你只是把热情都用在了工作上。",
+        traits: ["高效", "独立", "冷静", "略显疏离"],
+        ideal: { energy: 4, social: 1.5, stress: 4.5, style: 4, mood: 1.5 }
+    },
+    {
+        id: "hotpot_base", name: "火锅底料", emoji: "🫕", rarity: "SR",
+        tagline: "自己不发光，但能让所有人沸腾",
+        desc: "你是团队里的隐形MVP。很少站在聚光灯下，但所有人都知道：没有你，团队就是一锅白开水。你擅长调动气氛、协调矛盾，是最被低估的那种人。",
+        traits: ["协调力强", "默默付出", "被低估", "不可或缺"],
+        ideal: { energy: 4.5, social: 4.5, stress: 4, style: 2, mood: 4 }
+    },
+    {
+        id: "instant_noodles", name: "泡面", emoji: "🍜", rarity: "R",
+        tagline: "三分钟搞定一切，是效率也是将就",
+        desc: "你的人生哲学是：能三分钟解决的事绝不花五分钟。快速、高效、不挑环境。虽然偶尔觉得自己活得有点糙，但你知道：能吃饱就是胜利。",
+        traits: ["效率至上", "适应力强", "略显糙", "实用主义"],
+        ideal: { energy: 4, social: 3, stress: 3.5, style: 1.5, mood: 3 }
+    },
+    {
+        id: "milk_tea", name: "奶茶", emoji: "🧋", rarity: "R",
+        tagline: "含糖量决定今天的工作态度",
+        desc: "你的情绪波动和奶茶的甜度成正比。你是办公室的开心果，口头禅是「我请大家喝奶茶吧」——用甜蜜治愈所有人。",
+        traits: ["情绪外放", "慷慨", "治愈系", "容易受影响"],
+        ideal: { energy: 4, social: 4.5, stress: 2, style: 4, mood: 4.5 }
+    },
+    {
+        id: "laoganma", name: "老干妈", emoji: "🌶️", rarity: "SR",
+        tagline: "看着普通，但谁都离不开你",
+        desc: "你不是最耀眼的，但你是最稳的。简历不华丽，Title不高级，但关键时刻能顶上去。你像老干妈——货架上最不起眼，却是购物车里永远不会删除的存在。",
+        traits: ["稳定可靠", "低调实干", "不可替代", "朴实无华"],
+        ideal: { energy: 3, social: 3, stress: 4.5, style: 1.5, mood: 3 }
+    },
+    {
+        id: "tiramisu", name: "提拉米苏", emoji: "🍰", rarity: "SR",
+        tagline: "分层严重——面上精致，底下是碎饼干",
+        desc: "表面上你是办公室最精致的人，PPT做得像艺术品。但只有你自己知道，精致全靠硬撑，内心和碎饼干一样脆弱。你的精致是盔甲，也是倔强。",
+        traits: ["精致", "要面子", "内心脆弱", "追求完美"],
+        ideal: { energy: 3, social: 4, stress: 1.5, style: 5, mood: 3 }
+    },
+    {
+        id: "onigiri", name: "便利店饭团", emoji: "🍙", rarity: "R",
+        tagline: "便宜实惠能打，是团队里最稳的人",
+        desc: "你像便利店饭团——不是最好吃的，但永远在那里、永远够用、永远不出错。上司出差第一个想到你，同事请假第一个找你顶班。",
+        traits: ["可靠", "朴实", "任劳任怨", "存在感低但不可缺"],
+        ideal: { energy: 2.5, social: 2.5, stress: 4, style: 1.5, mood: 3.5 }
+    },
+    {
+        id: "spicy_hotpot", name: "麻辣火锅", emoji: "🍲", rarity: "R",
+        tagline: "要么不干，干就干到沸腾",
+        desc: "你是办公室里的热血战士，做事自带BGM。只有滚烫和凉透两种温度——要么熬夜爆肝要么彻底摆烂，没有中间状态。",
+        traits: ["激情", "极端", "感染力强", "易倦怠"],
+        ideal: { energy: 5, social: 4.5, stress: 3, style: 3, mood: 4 }
+    },
+    {
+        id: "waimai", name: "外卖", emoji: "🥡", rarity: "R",
+        tagline: "永远在路上，永远被催",
+        desc: "你的日常：赶deadline、赶地铁、赶会议。像一份外卖——从出锅就开始倒计时，每一秒都在被催促。微信置顶永远是工作群。",
+        traits: ["忙碌", "焦虑", "多任务", "时间不够用"],
+        ideal: { energy: 4, social: 3, stress: 1.5, style: 3, mood: 2 }
+    },
+    {
+        id: "porridge", name: "白粥", emoji: "🥣", rarity: "SR",
+        tagline: "什么都不加，但什么都能配",
+        desc: "你是最百搭的存在。不挑队友、不挑项目、不挑工位——放哪儿都能活。你有一种让所有人都舒服的力量。加班到崩溃时，同事最想找的就是你。",
+        traits: ["随和", "包容", "没野心", "治愈系"],
+        ideal: { energy: 1.5, social: 3.5, stress: 3.5, style: 1.5, mood: 4 }
+    },
+    {
+        id: "energy_drink", name: "功能饮料", emoji: "⚡", rarity: "SSR",
+        tagline: "不是在冲刺，就是在准备冲刺",
+        desc: "你是团队里的永动机。别人下班你加班，别人摸鱼你学习。像功能饮料——不好喝，但管用。你在的地方没人好意思摸鱼。",
+        traits: ["卷王", "自驱力强", "压力大", "让人有压迫感"],
+        ideal: { energy: 5, social: 2.5, stress: 4.5, style: 4, mood: 2 }
+    },
+    {
+        id: "leftover", name: "昨天的剩饭", emoji: "🫙", rarity: "SSR",
+        tagline: "热一热还能吃，但确实不新鲜了",
+        desc: "你在这家公司待太久了。激情凉了，成长找不到了，但走又没那个勇气。你就像冰箱里那盒不知道放了几天的剩饭——丢了可惜，吃了没味。你偶尔会想：当初那个热气腾腾的自己，去哪了？",
+        traits: ["倦怠", "安于现状", "想走又不走", "怀念过去"],
+        ideal: { energy: 1.5, social: 2, stress: 2.5, style: 2, mood: 1.5 }
+    }
+];
+
+// ===== 游戏状态 =====
+let currentQuestion = 0;
+let scores = { energy: 0, social: 0, stress: 0, style: 0, mood: 0 };
+let answers = []; // 记录每题选择的index，用于后退时撤销加分
+
+function startQuiz() {
+    currentQuestion = 0;
+    scores = { energy: 0, social: 0, stress: 0, style: 0, mood: 0 };
+    answers = [];
+    document.getElementById('start-screen').classList.remove('active');
+    document.getElementById('quiz-screen').classList.add('active');
+    renderQuestion();
+}
+
+function updateBackButton() {
+    const btn = document.getElementById('back-btn');
+    btn.disabled = currentQuestion === 0;
+}
+
+function renderQuestion() {
+    const q = questions[currentQuestion];
+    const labels = ['A', 'B', 'C', 'D'];
+    
+    document.getElementById('current-q').textContent = currentQuestion + 1;
+    document.getElementById('progress-fill').style.width = ((currentQuestion) / questions.length * 100) + '%';
+    updateBackButton();
+    
+    // 检查这题之前是否已有选择（后退回来的情况）
+    const previousChoice = answers[currentQuestion];
+    
+    const card = document.getElementById('question-card');
+    card.innerHTML = `
+        <span class="question-number">Q${currentQuestion + 1}</span>
+        <div class="question-text">${q.text}</div>
+        <div class="options">
+            ${q.options.map((opt, i) => `
+                <button class="option-btn ${previousChoice === i ? 'selected' : ''}" onclick="selectOption(${i})">
+                    <span class="option-label">${labels[i]}</span>
+                    <span>${opt.text}</span>
+                </button>
+            `).join('')}
+        </div>
+    `;
+    
+    // 重新触发动画
+    card.style.animation = 'none';
+    card.offsetHeight;
+    card.style.animation = 'slideUp 0.4s ease-out';
+}
+
+function selectOption(index) {
+    const q = questions[currentQuestion];
+    const option = q.options[index];
+    
+    // 如果这题之前有选过（后退回来重选的情况），先撤销旧答案的加分
+    if (answers[currentQuestion] !== undefined) {
+        const oldOption = q.options[answers[currentQuestion]];
+        for (const [dim, val] of Object.entries(oldOption.scores)) {
+            scores[dim] -= val;
+        }
+    }
+    
+    // 记录新选择并加分
+    answers[currentQuestion] = index;
+    for (const [dim, val] of Object.entries(option.scores)) {
+        scores[dim] += val;
+    }
+    
+    // 高亮选中
+    const buttons = document.querySelectorAll('.option-btn');
+    buttons.forEach(b => b.classList.remove('selected'));
+    buttons[index].classList.add('selected');
+    
+    // 延迟跳转到下一题
+    setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+            renderQuestion();
+        } else {
+            showResult();
+        }
+    }, 400);
+}
+
+function goBack() {
+    if (currentQuestion > 0) {
+        currentQuestion--;
+        renderQuestion();
+    }
+}
+
+function showResult() {
+    document.getElementById('quiz-screen').classList.remove('active');
+    document.getElementById('result-screen').classList.add('active');
+    document.getElementById('progress-fill').style.width = '100%';
+    
+    // 计算各维度归一化分数 (1-5)
+    const maxPossible = { energy: 0, social: 0, stress: 0, style: 0, mood: 0 };
+    questions.forEach(q => {
+        const dimMax = {};
+        q.options.forEach(opt => {
+            for (const [d, v] of Object.entries(opt.scores)) {
+                dimMax[d] = Math.max(dimMax[d] || 0, v);
+            }
+        });
+        for (const [d, v] of Object.entries(dimMax)) {
+            maxPossible[d] += v;
+        }
+    });
+    
+    const normalized = {};
+    for (const d of Object.keys(scores)) {
+        normalized[d] = Math.max(1, Math.min(5, (scores[d] / (maxPossible[d] || 1)) * 5));
+    }
+    
+    // 匹配最接近的食物
+    let bestMatch = results[0];
+    let bestDist = Infinity;
+    
+    results.forEach(r => {
+        let dist = 0;
+        for (const d of Object.keys(normalized)) {
+            dist += Math.pow(normalized[d] - r.ideal[d], 2);
+        }
+        dist = Math.sqrt(dist);
+        if (dist < bestDist) {
+            bestDist = dist;
+            bestMatch = r;
+        }
+    });
+    
+    // 渲染结果
+    const rarityClass = bestMatch.rarity.toLowerCase();
+    const card = document.getElementById('result-card');
+    card.innerHTML = `
+        <span class="result-badge ${rarityClass}">${bestMatch.rarity}</span>
+        <span class="result-emoji">${bestMatch.emoji}</span>
+        <h2 class="result-name">${bestMatch.name}</h2>
+        <p class="result-tagline">${bestMatch.tagline}</p>
+        <div class="result-desc">${bestMatch.desc}</div>
+        <div class="result-traits">
+            ${bestMatch.traits.map(t => `<span class="trait-tag">${t}</span>`).join('')}
+        </div>
+        <div class="dimension-bars">
+            ${renderDimBar('⚡ 能量', 'energy', normalized.energy)}
+            ${renderDimBar('👥 社交', 'social', normalized.social)}
+            ${renderDimBar('🛡️ 抗压', 'stress', normalized.stress)}
+            ${renderDimBar('✨ 精致', 'style', normalized.style)}
+            ${renderDimBar('🎭 情绪', 'mood', normalized.mood)}
+        </div>
+        <div class="action-buttons">
+            <p class="share-group-label">📱 移动端</p>
+            <button class="action-btn primary" onclick="mobileShare()">📸 长按截图分享</button>
+            <p class="share-group-label">💻 PC端</p>
+            <div class="share-row">
+                <button class="action-btn pc-btn" onclick="downloadImage()">💾 下载图片</button>
+                <button class="action-btn pc-btn" onclick="copyToClipboard()">📋 复制到剪贴板</button>
+            </div>
+            <button class="action-btn secondary" onclick="restartQuiz()">🔄 再测一次</button>
+        </div>
+        <p class="watermark">🍜 你是什么打工人食物 · 趣味测试 · 仅供娱乐</p>
+    `;
+    
+    // 延迟触发维度条动画
+    setTimeout(() => {
+        document.querySelectorAll('.dim-fill').forEach(el => {
+            el.style.width = el.dataset.width;
+        });
+    }, 300);
+}
+
+function renderDimBar(label, dim, value) {
+    const pct = (value / 5 * 100).toFixed(0);
+    return `
+        <div class="dim-row">
+            <span class="dim-label">${label}</span>
+            <div class="dim-track">
+                <div class="dim-fill ${dim}" data-width="${pct}%" style="width: 0%"></div>
+            </div>
+            <span class="dim-value">${value.toFixed(1)}</span>
+        </div>
+    `;
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+async function captureCard() {
+    const card = document.getElementById('result-card');
+    // 临时隐藏按钮区域，只截结果内容
+    const actions = card.querySelector('.action-buttons');
+    const watermark = card.querySelector('.watermark');
+    if (actions) actions.style.display = 'none';
+    
+    const canvas = await html2canvas(card, {
+        scale: 2,
+        backgroundColor: '#FFFFFF',
+        borderRadius: '24px',
+        useCORS: true,
+        logging: false,
+    });
+    
+    if (actions) actions.style.display = '';
+    return canvas;
+}
+
+function mobileShare() {
+    showToast('📸 请长按结果卡片区域截图，然后分享到朋友圈/小红书');
+}
+
+async function downloadImage() {
+    showToast('⏳ 正在生成图片...');
+    try {
+        const canvas = await captureCard();
+        const link = document.createElement('a');
+        link.download = '我的打工人食物测试结果.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast('✅ 图片已下载！');
+    } catch (e) {
+        showToast('❌ 生成失败，请尝试手动截图');
+        console.error(e);
+    }
+}
+
+async function copyToClipboard() {
+    showToast('⏳ 正在生成图片...');
+    try {
+        const canvas = await captureCard();
+        canvas.toBlob(async (blob) => {
+            try {
+                await navigator.clipboard.write([
+                    new ClipboardItem({ 'image/png': blob })
+                ]);
+                showToast('✅ 已复制到剪贴板！直接 Ctrl+V 粘贴即可');
+            } catch (clipErr) {
+                // 降级：如果剪贴板API不可用，改为下载
+                console.warn('Clipboard API failed, falling back to download', clipErr);
+                const link = document.createElement('a');
+                link.download = '我的打工人食物测试结果.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showToast('⚠️ 剪贴板不可用，已改为下载图片');
+            }
+        }, 'image/png');
+    } catch (e) {
+        showToast('❌ 生成失败，请尝试手动截图');
+        console.error(e);
+    }
+}
+
+function shareResult() { mobileShare(); }
+
+function restartQuiz() {
+    document.getElementById('result-screen').classList.remove('active');
+    document.getElementById('start-screen').classList.add('active');
+}
+</script>
+
+</body>
+</html>
